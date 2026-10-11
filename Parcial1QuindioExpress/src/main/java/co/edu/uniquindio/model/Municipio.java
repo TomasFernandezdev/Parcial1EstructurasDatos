@@ -1,4 +1,6 @@
 package co.edu.uniquindio.model;
 
 public enum Municipio {
+    ARMENIA, BUENAVISTA, CALARCA, CIRCASIA,
+    CORDOBA, FILANDIA, GENOVA, LATEBAIDA, MONTENEGRO, PIJAO, QUIMBAYA, SALENTO
 }
