@@ -36,4 +36,43 @@ public class ListaEnlazada<T> {
             }
         }
     }
+    public Nodo<T> getFirst(){
+        return cabeza;
+    }
+    public Nodo<T> getLast(){
+        Nodo<T> actual = cabeza;
+        while(actual.getSiguiente() != null){
+            actual = actual.getSiguiente();
+        }
+        return actual;
+    }
+    public Nodo<T> findByIndex(int index){
+        Nodo<T> actual = cabeza;
+        int contador = 0;
+        while(actual != null){
+            if(contador == index){
+                return actual;
+            }
+            actual = actual.getSiguiente();
+            contador++;
+        }
+        return null;
+    }
+    public void removeByIndex(int index){
+        int contador = 0;
+        Nodo<T> aux = null;
+        for(Nodo<T> nodo = cabeza;nodo != null; nodo = nodo.getSiguiente()){
+            if(contador == index){
+                aux.setSiguiente(nodo.getSiguiente());
+                break;
+            }
+            aux = nodo;
+            contador++;
+        }
+    }
+    public void print(){
+        for(Nodo<T> nodo = cabeza;nodo != null; nodo = nodo.getSiguiente()){
+            System.out.println(nodo.getT());
+        }
+    }
 }
