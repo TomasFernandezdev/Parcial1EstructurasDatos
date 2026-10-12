@@ -29,10 +29,25 @@ public class Distribuidora {
         dataBase.historialPaquetes.mostrarHistorial();
     }
 
-    public String asignarRepartidor() {
-        String resultado = "";
-        ListaEnlazada<Repartidor> listaRepartidores = this.dataBase.repartidores;
-        return resultado;
+    public String asignarRepartidor(Paquete paquete) {
+        if (this.dataBase.repartidores == null) {
+            return "No hay lista de repartidores registrada.";
+        }
+        Repartidor disponible = this.dataBase.repartidores.buscar(new Criterio<Repartidor>() {
+            @Override
+            public boolean probar(Repartidor r) {
+                return r.isEstaDisponible();
+            }
+        });
+
+        if (disponible != null) {
+            disponible.setEstaDisponible(false);
+            paquete.setRepartidorAsignado(disponible);
+            return "Paquete " + paquete.getCodigo() + " asignado exitosamente a " + disponible.getNombre();
+        }
+
+        return "No hay repartidores disponibles en este momento.";
     }
+
 }
 
