@@ -1,7 +1,6 @@
 package co.edu.uniquindio.app;
 
-import co.edu.uniquindio.model.DivideVenceras;
-import co.edu.uniquindio.model.ListaEnlazada;
+import co.edu.uniquindio.model.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -32,5 +31,12 @@ public class Main {
         lista.removeByIndex(2);
         lista.print();
         System.out.println(lista.findByIndex(2).getT());
+
+        System.out.println("---Pruebas de Negocio---");
+        Repartidor repartidor1 = new Repartidor("123", "Andresinho", Municipio.ARMENIA);
+
+        Paquete paquete = new Paquete("1", Municipio.ARMENIA, 12.3, 4, 50, repartidor1);
+
+
     }
 }
