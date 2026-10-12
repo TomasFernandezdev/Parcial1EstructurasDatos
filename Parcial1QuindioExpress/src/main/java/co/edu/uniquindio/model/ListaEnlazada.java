@@ -92,4 +92,16 @@ public class ListaEnlazada<T> {
         }
         System.out.println();
     }
+
+    public T buscar(Criterio<T> criterio) {
+        Nodo<T> actual = cabeza;
+        while (actual != null) {
+            if (criterio.probar(actual.getT())) {
+                return actual.getT();
+            }
+            actual = actual.getSiguiente();
+        }
+        return null;
+    }
+
 }
