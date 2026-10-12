@@ -28,5 +28,22 @@ public class DataBase {
             paquetesPorMunicipio.get(paquete.getDestino()).add(paquete);
         }
     }
+    public double calcularPesoPorMunicipio(Municipio municipio){
+        double suma = 0.f;
+        for(Paquete p : paquetesPorMunicipio.get(municipio)){
+            suma += p.getPeso();
+        }
+        return suma;
+    }
+    public List<Paquete> obtenerPaquetesPrioridadMayor(int Priopridad){
+        List<Paquete> aux = new LinkedList<>();
+        for(Paquete p : paquetes){
+            if(p.getPrioridad() >= Priopridad){
+                aux.add(p);
+            }
+        }
+        return aux;
+    }
+
 
 }
