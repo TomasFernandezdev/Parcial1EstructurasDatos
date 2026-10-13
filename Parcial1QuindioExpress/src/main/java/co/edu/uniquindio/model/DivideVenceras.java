@@ -8,6 +8,9 @@ public class DivideVenceras {
     }
 
     public double sumarPesoRecursivo(Municipio m, double suma, int aux){
+        if (aux == 0) {
+            p = DataBase.getInstance().paquetes.toArray(new Paquete[0]);
+        }
         if(aux == p.length){
             return suma;
         }
@@ -16,14 +19,24 @@ public class DivideVenceras {
         }
         return sumarPesoRecursivo(m, suma, aux+1);
     }
-    public Paquete[] DeterminarPrioridadMayor(int inicio, Paquete[] aux, int limite){
-        if(inicio == p.length){
-            return aux;
+    public Paquete[] determinarPrioridadMayor(int limite) {
+        p = DataBase.getInstance().paquetes.toArray(new Paquete[0]);
+        Paquete[] temporal = new Paquete[p.length];
+        int[] contador = {0};
+        determinarPrioridadMayorRec(0, limite, temporal, contador);
+        Paquete[] resultado = new Paquete[contador[0]];
+        System.arraycopy(temporal, 0, resultado, 0, contador[0]);
+        return resultado;
+    }
+
+    private void determinarPrioridadMayorRec(int inicio, int limite, Paquete[] aux, int[] contador) {
+        if (inicio == p.length) {
+            return;
         }
-        if(p[inicio].getPrioridad() >= limite){
-            aux[aux.length] = p[inicio];
+        if (p[inicio].getPrioridad() >= limite) {
+            aux[contador[0]++] = p[inicio];
         }
-        return DeterminarPrioridadMayor(inicio+1, aux, limite);
+        determinarPrioridadMayorRec(inicio + 1, limite, aux, contador);
     }
 
     public Paquete buscarPaquetePorCodigo(String codigo) {

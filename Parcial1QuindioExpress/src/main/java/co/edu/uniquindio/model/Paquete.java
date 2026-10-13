@@ -94,6 +94,6 @@ public class Paquete implements Comparable<Paquete>{
 
     @Override
     public String toString() {
-        return this.getCodigo();
+        return codigo + " (" + destino + ", " + peso + "kg)";
     }
 }
