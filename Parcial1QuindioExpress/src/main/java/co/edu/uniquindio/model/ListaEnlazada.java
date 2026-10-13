@@ -103,5 +103,12 @@ public class ListaEnlazada<T> {
         }
         return null;
     }
+    public int getSize(){
+        int contador = 0;
+        for(Nodo<T> nodo = cabeza;nodo != null; nodo = nodo.getSiguiente()){
+            contador++;
+        }
+        return contador;
+    }
 
 }

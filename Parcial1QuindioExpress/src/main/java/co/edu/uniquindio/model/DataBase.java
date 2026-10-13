@@ -10,7 +10,7 @@ public class DataBase {
     public static DataBase instance;
 
     private DataBase() {
-        this.paquetes = new TreeSet<>(Comparator.comparing(Paquete::getCodigo));
+        this.paquetes = new TreeSet<>(ComparadoresPaquete.POR_CODIGO);
         this.paquetesPorMunicipio = new LinkedHashMap<>();
         this.historialPaquetes = new ListaEnlazada<>();
         this.repartidores = new ListaEnlazada<>();
@@ -47,6 +47,17 @@ public class DataBase {
         }
         return aux;
     }
-
+    public Paquete atenderPaquete(){
+        return paquetes.stream().min(ComparadoresPaquete.POR_PRIORIDAD_TIEMPO_CODIGO).orElse(null);
+    }
+    public List<Paquete> ordenarporPrioridad(){
+        return paquetes.stream().sorted(ComparadoresPaquete.POR_PRIORIDAD).toList();
+    }
+    public List<Paquete> ordenarporPeso(){
+        return paquetes.stream().sorted(ComparadoresPaquete.POR_PESO).toList();
+    }
+    public List<Paquete> ordenarporTiempo(){
+        return paquetes.stream().sorted(ComparadoresPaquete.POR_TIEMPO).toList();
+    }
 
 }
