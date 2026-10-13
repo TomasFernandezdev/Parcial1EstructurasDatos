@@ -44,4 +44,9 @@ public class Repartidor {
     public void setEstaDisponible(boolean estaDisponible) {
         this.estaDisponible = estaDisponible;
     }
+
+    @Override
+    public String toString() {
+        return nombre + " (" + identificacion + ", " + zona + ")";
+    }
 }

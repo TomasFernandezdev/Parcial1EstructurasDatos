@@ -1,5 +1,7 @@
 package co.edu.uniquindio.model;
 
+import java.util.function.Consumer;
+
 public class ListaEnlazada<T> {
     public Nodo<T> cabeza;
 
@@ -27,12 +29,15 @@ public class ListaEnlazada<T> {
     public void removeLast(){
         if(cabeza == null){
             throw new RuntimeException("La lista está vacía");
-        }else{
-            for(Nodo<T> actual = cabeza; actual.getSiguiente() != null; actual = actual.getSiguiente()){
-                if(actual.getSiguiente().getSiguiente() == null){
-                    actual.setSiguiente(null);
-                    break;
-                }
+        }
+        if(cabeza.getSiguiente() == null){
+            cabeza = null;
+            return;
+        }
+        for(Nodo<T> actual = cabeza; actual.getSiguiente() != null; actual = actual.getSiguiente()){
+            if(actual.getSiguiente().getSiguiente() == null){
+                actual.setSiguiente(null);
+                break;
             }
         }
     }
@@ -40,6 +45,9 @@ public class ListaEnlazada<T> {
         return cabeza;
     }
     public Nodo<T> getLast(){
+        if (cabeza == null) {
+            return null;
+        }
         Nodo<T> actual = cabeza;
         while(actual.getSiguiente() != null){
             actual = actual.getSiguiente();
@@ -59,15 +67,22 @@ public class ListaEnlazada<T> {
         return null;
     }
     public void removeByIndex(int index){
+        if (cabeza == null || index < 0) {
+            return;
+        }
+        if (index == 0) {
+            cabeza = cabeza.getSiguiente();
+            return;
+        }
         int contador = 0;
-        Nodo<T> aux = null;
-        for(Nodo<T> nodo = cabeza;nodo != null; nodo = nodo.getSiguiente()){
-            if(contador == index){
+        Nodo<T> aux = cabeza;
+        for (Nodo<T> nodo = cabeza.getSiguiente(); nodo != null; nodo = nodo.getSiguiente()) {
+            contador++;
+            if (contador == index) {
                 aux.setSiguiente(nodo.getSiguiente());
-                break;
+                return;
             }
             aux = nodo;
-            contador++;
         }
     }
     public void print(){
@@ -102,6 +117,64 @@ public class ListaEnlazada<T> {
             actual = actual.getSiguiente();
         }
         return null;
+    }
+    public int getSize(){
+        int contador = 0;
+        for(Nodo<T> nodo = cabeza;nodo != null; nodo = nodo.getSiguiente()){
+            contador++;
+        }
+        return contador;
+    }
+
+    public boolean isEmpty() {
+        return cabeza == null;
+    }
+
+    public void forEach(Consumer<T> accion) {
+        Nodo<T> actual = cabeza;
+        while (actual != null) {
+            accion.accept(actual.getT());
+            actual = actual.getSiguiente();
+        }
+    }
+
+    public boolean existe(Criterio<T> criterio) {
+        return buscar(criterio) != null;
+    }
+
+    public boolean eliminar(Criterio<T> criterio) {
+        if (cabeza == null || criterio == null) {
+            return false;
+        }
+
+        if (criterio.probar(cabeza.getT())) {
+            cabeza = cabeza.getSiguiente();
+            return true;
+        }
+
+        Nodo<T> anterior = cabeza;
+        Nodo<T> actual = cabeza.getSiguiente();
+        while (actual != null) {
+            if (criterio.probar(actual.getT())) {
+                anterior.setSiguiente(actual.getSiguiente());
+                return true;
+            }
+            anterior = actual;
+            actual = actual.getSiguiente();
+        }
+        return false;
+    }
+
+    public boolean actualizar(Criterio<T> criterio, Consumer<T> modificador) {
+        Nodo<T> actual = cabeza;
+        while (actual != null) {
+            if (criterio.probar(actual.getT())) {
+                modificador.accept(actual.getT());
+                return true;
+            }
+            actual = actual.getSiguiente();
+        }
+        return false;
     }
 
 }
