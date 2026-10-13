@@ -1,14 +1,24 @@
 package co.edu.uniquindio.model;
 
+import java.util.List;
+
 public class Distribuidora {
     private String nombre;
     private String nit;
-    private DataBase dataBase; // 1. Atributo para la base de datos
+    private DataBase dataBase;
 
     public Distribuidora(String nombre, String nit) {
         this.nombre = "QuindíoExpress";
         this.nit = "112121212";
-        this.dataBase = DataBase.getInstance(); //singleton
+        this.dataBase = DataBase.getInstance();
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public String getNit() {
+        return nit;
     }
 
     public DataBase getDataBase() {
@@ -20,8 +30,14 @@ public class Distribuidora {
     }
 
     public void registrarEntrega(Paquete paquete) {
-        paquete.getRepartidorAsignado().setEstaDisponible(true);
+        if (paquete.getRepartidorAsignado() != null) {
+            paquete.getRepartidorAsignado().setEstaDisponible(true);
+        }
         paquete.setEntregado(true);
+        dataBase.paquetes.remove(paquete);
+        if (dataBase.paquetesPorMunicipio.containsKey(paquete.getDestino())) {
+            dataBase.paquetesPorMunicipio.get(paquete.getDestino()).remove(paquete);
+        }
         this.dataBase.historialPaquetes.addLast(paquete);
     }
 
@@ -30,15 +46,10 @@ public class Distribuidora {
     }
 
     public String asignarRepartidor(Paquete paquete) {
-        if (this.dataBase.repartidores == null) {
+        if (dataBase.repartidores.isEmpty()) {
             return "No hay lista de repartidores registrada.";
         }
-        Repartidor disponible = this.dataBase.repartidores.buscar(new Criterio<Repartidor>() {
-            @Override
-            public boolean probar(Repartidor r) {
-                return r.isEstaDisponible();
-            }
-        });
+        Repartidor disponible = dataBase.repartidores.buscar(r -> r.isEstaDisponible());
 
         if (disponible != null) {
             disponible.setEstaDisponible(false);
@@ -48,16 +59,63 @@ public class Distribuidora {
 
         return "No hay repartidores disponibles en este momento.";
     }
-    //CRUD REPARTIDOR
+
+    public double calcularPesoPorMunicipio(Municipio municipio) {
+        return dataBase.calcularPesoPorMunicipio(municipio);
+    }
+
+    public List<Paquete> obtenerPaquetesPrioridadMayor(int prioridadMinima) {
+        return dataBase.obtenerPaquetesPrioridadMayor(prioridadMinima);
+    }
+
+    public Paquete atenderPaquete() {
+        return dataBase.atenderPaquete();
+    }
+
+    public List<Paquete> ordenarPorPrioridad() {
+        return dataBase.ordenarporPrioridad();
+    }
+
+    public List<Paquete> ordenarPorPeso() {
+        return dataBase.ordenarporPeso();
+    }
+
+    public List<Paquete> ordenarPorTiempo() {
+        return dataBase.ordenarporTiempo();
+    }
+
+    public double sumarPesoMunicipioDivideVenceras(Municipio municipio) {
+        DivideVenceras dv = new DivideVenceras();
+        return dv.sumarPesoRecursivo(municipio, 0, 0);
+    }
+
+    public Paquete buscarPaquetePorCodigoDivideVenceras(String codigo) {
+        return new DivideVenceras().buscarPaquetePorCodigo(codigo);
+    }
+
+    public Paquete buscarPaqueteMasPesadoDivideVenceras() {
+        return new DivideVenceras().buscarPaqueteMasPesado();
+    }
+
+    public Paquete[] paquetesPrioridadMayorDivideVenceras(int limite) {
+        return new DivideVenceras().determinarPrioridadMayor(limite);
+    }
+
+    public List<Paquete> paquetesPorMunicipio(Municipio municipio) {
+        if (!dataBase.paquetesPorMunicipio.containsKey(municipio)) {
+            return List.of();
+        }
+        return List.copyOf(dataBase.paquetesPorMunicipio.get(municipio));
+    }
+
+    // CRUD REPARTIDOR
     public boolean createRepartidor(Repartidor repartidor) {
         if (repartidor == null || repartidor.getIdentificacion() == null) {
-            return false;   
+            return false;
         }
 
-        for (Nodo<Repartidor> actual = dataBase.repartidores.cabeza; actual != null; actual = actual.siguiente) {
-            if (actual.getT().getIdentificacion().equals(repartidor.getIdentificacion())) {
-                return false;
-            }
+        if (dataBase.repartidores.existe(r -> r.getIdentificacion().equals(repartidor.getIdentificacion()))) {
+            return false;
         }
 
         dataBase.repartidores.addLast(repartidor);
@@ -69,37 +127,34 @@ public class Distribuidora {
             return false;
         }
 
-        for (Nodo<Repartidor> actual = dataBase.repartidores.cabeza; actual != null; actual = actual.siguiente) {
-            Repartidor repartidor = actual.getT();
-
-            if (repartidor.getIdentificacion().equals(identificacion)) {
-                System.out.println("Identificación: " + repartidor.getIdentificacion());
-                System.out.println("Nombre: " + repartidor.getNombre());
-                System.out.println("Zona: " + repartidor.getZona());
-                System.out.println("Disponible: " + repartidor.isEstaDisponible());
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public boolean readRepartidor() {
-        if (dataBase.repartidores == null || dataBase.repartidores.cabeza == null) {
+        Repartidor repartidor = dataBase.repartidores.buscar(r -> r.getIdentificacion().equals(identificacion));
+        if (repartidor == null) {
             return false;
         }
 
-        for (Nodo<Repartidor> actual = dataBase.repartidores.cabeza; actual != null; actual = actual.siguiente) {
-            Repartidor repartidor = actual.getT();
+        imprimirRepartidor(repartidor);
+        return true;
+    }
 
-            System.out.println("Identificación: " + repartidor.getIdentificacion());
-            System.out.println("Nombre: " + repartidor.getNombre());
-            System.out.println("Zona: " + repartidor.getZona());
-            System.out.println("Disponible: " + repartidor.isEstaDisponible());
-            System.out.println("-----------------------------");
+    public boolean readRepartidor() {
+        if (dataBase.repartidores.isEmpty()) {
+            return false;
         }
 
+        dataBase.repartidores.forEach(this::imprimirRepartidorConSeparador);
         return true;
+    }
+
+    private void imprimirRepartidor(Repartidor repartidor) {
+        System.out.println("Identificación: " + repartidor.getIdentificacion());
+        System.out.println("Nombre: " + repartidor.getNombre());
+        System.out.println("Zona: " + repartidor.getZona());
+        System.out.println("Disponible: " + repartidor.isEstaDisponible());
+    }
+
+    private void imprimirRepartidorConSeparador(Repartidor repartidor) {
+        imprimirRepartidor(repartidor);
+        System.out.println("-----------------------------");
     }
 
     public boolean updateRepartidor(Repartidor repartidor) {
@@ -107,47 +162,24 @@ public class Distribuidora {
             return false;
         }
 
-        for (Nodo<Repartidor> actual = dataBase.repartidores.cabeza; actual != null; actual = actual.siguiente) {
-            Repartidor repartidorActual = actual.getT();
-
-            if (repartidorActual.getIdentificacion().equals(repartidor.getIdentificacion())) {
-                repartidorActual.setNombre(repartidor.getNombre());
-                repartidorActual.setZona(repartidor.getZona());
-                repartidorActual.setEstaDisponible(repartidor.isEstaDisponible());
-                return true;
-            }
-        }
-
-        return false;
+        return dataBase.repartidores.actualizar(
+                r -> r.getIdentificacion().equals(repartidor.getIdentificacion()),
+                actual -> {
+                    actual.setNombre(repartidor.getNombre());
+                    actual.setZona(repartidor.getZona());
+                    actual.setEstaDisponible(repartidor.isEstaDisponible());
+                }
+        );
     }
 
     public boolean deleteRepartidor(String identificacion) {
-        if (identificacion == null || dataBase.repartidores == null || dataBase.repartidores.cabeza == null) {
+        if (identificacion == null) {
             return false;
         }
-
-        Nodo<Repartidor> actual = dataBase.repartidores.cabeza;
-        Nodo<Repartidor> anterior = null;
-
-        while (actual != null) {
-            if (actual.getT().getIdentificacion().equals(identificacion)) {
-                if (anterior == null) {
-                    dataBase.repartidores.cabeza = actual.getSiguiente();
-                } else {
-                    anterior.setSiguiente(actual.getSiguiente());
-                }
-
-                return true;
-            }
-
-            anterior = actual;
-            actual = actual.getSiguiente();
-        }
-
-        return false;
+        return dataBase.repartidores.eliminar(r -> r.getIdentificacion().equals(identificacion));
     }
-    
-    //CRUD PAQUETES
+
+    // CRUD PAQUETES
     public boolean createPaquete(Paquete paquete) {
         if (paquete == null || paquete.getCodigo() == null) {
             return false;
@@ -168,13 +200,7 @@ public class Distribuidora {
 
         for (Paquete paquete : dataBase.paquetes) {
             if (paquete.getCodigo().equals(codigo)) {
-                System.out.println("Código: " + paquete.getCodigo());
-                System.out.println("Destino: " + paquete.getDestino());
-                System.out.println("Peso: " + paquete.getPeso());
-                System.out.println("Prioridad: " + paquete.getPrioridad());
-                System.out.println("Tiempo estimado: " + paquete.getTiempoEstimado());
-                System.out.println("Repartidor asignado: " + paquete.getRepartidorAsignado());
-                System.out.println("Entregado: " + paquete.isEntregado());
+                imprimirPaquete(paquete);
                 return true;
             }
         }
@@ -183,22 +209,26 @@ public class Distribuidora {
     }
 
     public boolean readPaquete() {
-        if (dataBase.paquetes == null || dataBase.paquetes.isEmpty()) {
+        if (dataBase.paquetes.isEmpty()) {
             return false;
         }
 
         for (Paquete paquete : dataBase.paquetes) {
-            System.out.println("Código: " + paquete.getCodigo());
-            System.out.println("Destino: " + paquete.getDestino());
-            System.out.println("Peso: " + paquete.getPeso());
-            System.out.println("Prioridad: " + paquete.getPrioridad());
-            System.out.println("Tiempo estimado: " + paquete.getTiempoEstimado());
-            System.out.println("Repartidor asignado: " + paquete.getRepartidorAsignado());
-            System.out.println("Entregado: " + paquete.isEntregado());
+            imprimirPaquete(paquete);
             System.out.println("-----------------------------");
         }
 
         return true;
+    }
+
+    private void imprimirPaquete(Paquete paquete) {
+        System.out.println("Código: " + paquete.getCodigo());
+        System.out.println("Destino: " + paquete.getDestino());
+        System.out.println("Peso: " + paquete.getPeso());
+        System.out.println("Prioridad: " + paquete.getPrioridad());
+        System.out.println("Tiempo estimado: " + paquete.getTiempoEstimado());
+        System.out.println("Repartidor asignado: " + paquete.getRepartidorAsignado());
+        System.out.println("Entregado: " + paquete.isEntregado());
     }
 
     public boolean updatePaquete(Paquete paquete) {
@@ -225,7 +255,7 @@ public class Distribuidora {
     }
 
     public boolean deletePaquete(String codigo) {
-        if (codigo == null || dataBase.paquetes == null || dataBase.paquetes.isEmpty()) {
+        if (codigo == null || dataBase.paquetes.isEmpty()) {
             return false;
         }
 
@@ -249,5 +279,14 @@ public class Distribuidora {
         }
 
         return true;
+    }
+
+    public Paquete buscarPaqueteEnCola(String codigo) {
+        for (Paquete paquete : dataBase.paquetes) {
+            if (paquete.getCodigo().equals(codigo)) {
+                return paquete;
+            }
+        }
+        return null;
     }
 }
