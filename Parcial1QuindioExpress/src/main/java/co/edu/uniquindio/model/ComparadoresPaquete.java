@@ -10,15 +10,18 @@ public class ComparadoresPaquete {
     public static final Comparator<Paquete> POR_CODIGO =
             Comparator.comparing(Paquete::getCodigo);
 
-    // Por prioridad, de mayor a menor (5 primero)
-    public static final Comparator<Paquete> POR_PRIORIDAD_DESC =
+    //para atender paqwuetes en el orden de prioridad, tiempo estimado y codigo
+    public static final Comparator<Paquete> POR_PRIORIDAD_TIEMPO_CODIGO =
+            Comparator.comparingInt(Paquete::getPrioridad).reversed()
+                    .thenComparingInt(Paquete::getTiempoEstimado)
+                    .thenComparing(Paquete::getCodigo);
+    //prioridad
+    public static final Comparator<Paquete> POR_PRIORIDAD =
             Comparator.comparingInt(Paquete::getPrioridad).reversed();
-
-    // Por peso, de mayor a menor
-    public static final Comparator<Paquete> POR_PESO_DESC =
+    //peso
+    public static final Comparator<Paquete> POR_PESO =
             Comparator.comparingDouble(Paquete::getPeso).reversed();
-
-    // Por tiempo estimado, de menor a mayor
-    public static final Comparator<Paquete> POR_TIEMPO_ASC =
+    //Tiempo
+    public static final Comparator<Paquete> POR_TIEMPO =
             Comparator.comparingInt(Paquete::getTiempoEstimado);
 }
