@@ -15,8 +15,6 @@ public class Main {
         lista2.addLast(5.6);
         lista2.addLast(9.8);
 
-        double mayor = dv.buscarMayorPeso(lista2);
-        System.out.println("El mayor peso en la lista es: " + mayor);
 
 
 
