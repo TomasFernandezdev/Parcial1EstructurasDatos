@@ -9,6 +9,7 @@ public class Paquete implements Comparable<Paquete>{
     private int prioridad;
     private int tiempoEstimado; //numero de minutos estimados para la entrega
     private Repartidor repartidorAsignado;
+    private boolean entregado;
 
     public Paquete(String codigo, Municipio destino, double peso, int prioridad, int tiempoEstimado, Repartidor repartidorAsignado) {
         this.codigo = codigo;
@@ -17,6 +18,7 @@ public class Paquete implements Comparable<Paquete>{
         this.prioridad = prioridad;
         this.tiempoEstimado = tiempoEstimado;
         this.repartidorAsignado = repartidorAsignado;
+        this.entregado = false;
     }
 
     public String getCodigo() {
@@ -63,6 +65,14 @@ public class Paquete implements Comparable<Paquete>{
         return repartidorAsignado;
     }
 
+    public boolean isEntregado() {
+        return entregado;
+    }
+
+    public void setEntregado(boolean entregado) {
+        this.entregado = entregado;
+    }
+
     public void setRepartidorAsignado(Repartidor repartidorAsignado) {
         this.repartidorAsignado = repartidorAsignado;
     }
@@ -80,5 +90,10 @@ public class Paquete implements Comparable<Paquete>{
     @Override
     public int hashCode() {
         return Objects.hash(codigo);
+    }
+
+    @Override
+    public String toString() {
+        return this.getCodigo();
     }
 }

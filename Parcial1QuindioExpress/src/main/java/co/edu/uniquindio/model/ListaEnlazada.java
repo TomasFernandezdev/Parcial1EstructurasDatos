@@ -75,4 +75,33 @@ public class ListaEnlazada<T> {
             System.out.println(nodo.getT());
         }
     }
+
+    public void mostrarHistorial() {
+        if (cabeza == null) {
+            System.out.println("El historial de entregas está vacío");
+            return;
+        }
+        Nodo<T> actual = cabeza;
+        while (actual != null) {
+            System.out.print(actual.getT());
+
+            if (actual.getSiguiente() != null) {
+                System.out.print(" -> ");
+            }
+            actual = actual.getSiguiente();
+        }
+        System.out.println();
+    }
+
+    public T buscar(Criterio<T> criterio) {
+        Nodo<T> actual = cabeza;
+        while (actual != null) {
+            if (criterio.probar(actual.getT())) {
+                return actual.getT();
+            }
+            actual = actual.getSiguiente();
+        }
+        return null;
+    }
+
 }

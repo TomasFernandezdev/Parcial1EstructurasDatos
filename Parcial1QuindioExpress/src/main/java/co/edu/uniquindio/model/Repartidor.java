@@ -6,11 +6,11 @@ public class Repartidor {
     private Municipio zona;
     private boolean estaDisponible;
 
-    public Repartidor(String identificacion, String nombre, Municipio zona, boolean estaDisponible) {
+    public Repartidor(String identificacion, String nombre, Municipio zona) {
         this.identificacion = identificacion;
         this.nombre = nombre;
         this.zona = zona;
-        this.estaDisponible = estaDisponible;
+        this.estaDisponible = true;
     }
 
     public String getIdentificacion() {
