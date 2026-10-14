@@ -122,12 +122,14 @@ public class DataBase {
     public Paquete atenderPaquete(){
         return paquetes.stream().min(ComparadoresPaquete.POR_PRIORIDAD_TIEMPO_CODIGO).orElse(null);
     }
+
     public List<Paquete> ordenarporPrioridad(){
         return paquetes.stream().sorted(ComparadoresPaquete.POR_PRIORIDAD).toList();
     }
     public List<Paquete> ordenarporPeso(){
         return paquetes.stream().sorted(ComparadoresPaquete.POR_PESO).toList();
     }
+
     public List<Paquete> ordenarporTiempo(){
         return paquetes.stream().sorted(ComparadoresPaquete.POR_TIEMPO).toList();
     }
