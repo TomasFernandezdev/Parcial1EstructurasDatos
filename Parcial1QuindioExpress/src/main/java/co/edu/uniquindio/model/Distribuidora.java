@@ -51,7 +51,7 @@ public class Distribuidora {
         }
         Repartidor disponible = dataBase.repartidores.buscar(r -> r.isEstaDisponible());
 
-        if (disponible != null) {
+        if (disponible.isEstaDisponible() && paquete.getDestino().equals(disponible.getZona())) {
             disponible.setEstaDisponible(false);
             paquete.setRepartidorAsignado(disponible);
             return "Paquete " + paquete.getCodigo() + " asignado exitosamente a " + disponible.getNombre();
