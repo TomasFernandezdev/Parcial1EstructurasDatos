@@ -131,33 +131,5 @@ public class DataBase {
     public List<Paquete> ordenarporTiempo(){
         return paquetes.stream().sorted(ComparadoresPaquete.POR_TIEMPO).toList();
     }
-    public double calcularPesoPorMunicipio(Municipio municipio){
-        double suma = 0.f;
-        for(Paquete p : paquetesPorMunicipio.get(municipio)){
-            suma += p.getPeso();
-        }
-        return suma;
-    }
-    public List<Paquete> obtenerPaquetesPrioridadMayor(int Priopridad){
-        List<Paquete> aux = new LinkedList<>();
-        for(Paquete p : paquetes){
-            if(p.getPrioridad() >= Priopridad){
-                aux.add(p);
-            }
-        }
-        return aux;
-    }
-    public Paquete atenderPaquete(){
-        return paquetes.stream().min(ComparadoresPaquete.POR_PRIORIDAD_TIEMPO_CODIGO).orElse(null);
-    }
-    public List<Paquete> ordenarporPrioridad(){
-        return paquetes.stream().sorted(ComparadoresPaquete.POR_PRIORIDAD).toList();
-    }
-    public List<Paquete> ordenarporPeso(){
-        return paquetes.stream().sorted(ComparadoresPaquete.POR_PESO).toList();
-    }
-    public List<Paquete> ordenarporTiempo(){
-        return paquetes.stream().sorted(ComparadoresPaquete.POR_TIEMPO).toList();
-    }
 
 }

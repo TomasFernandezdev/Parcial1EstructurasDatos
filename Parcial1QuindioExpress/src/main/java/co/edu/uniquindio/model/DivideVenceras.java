@@ -4,7 +4,6 @@ public class DivideVenceras {
     public Paquete[] p;
 
     public DivideVenceras(){
-        p = DataBase.getInstance().paquetes.toArray(new Paquete[0]);
     }
 
     public double sumarPesoRecursivo(Municipio m, double suma, int aux){
